@@ -27,6 +27,17 @@ string Cipher(string msg) {
         index = 0;
         if (msg[i] == ' ') ciphered += msg[i]; // preserve spaces
         else {
+            //removing grave and acute accents À à È è É é Ì ì Ò ò Ó ó Ù ù
+            if (msg[i] == 'À') msg[i] = 'A';
+            else if (msg[i] == 'à') msg[i] = 'a';
+            else if (msg[i] == 'È' || msg[i] == 'É') msg[i] = 'E';
+            else if (msg[i] == 'è' || msg[i] == 'é') msg[i] = 'e';
+            else if (msg[i] == 'Ì') msg[i] = 'I';
+            else if (msg[i] == 'ì') msg[i] = 'i';
+            else if (msg[i] == 'Ò' || msg[i] == 'Ó') msg[i] = 'O';
+            else if (msg[i] == 'ò' || msg[i] == 'ó') msg[i] = 'o';
+            else if (msg[i] == 'Ù') msg[i] = 'U';
+            else if (msg[i] == 'ù') msg[i] = 'u';
             for (index = 0; index < 21; index++) {
                 if (msg[i] == Italian_Alphabet[index][0]) {
                     capital = 0;
@@ -53,7 +64,10 @@ string Cipher(string msg) {
 int main()
 {
     string message = "COLPISCI IL NEMICO ORA";
-    cout << Cipher(message);
+    cout << Cipher(message) << endl;
+    string message2;
+    getline(cin, message2);
+    cout << Cipher(message2);
 }
 
 
