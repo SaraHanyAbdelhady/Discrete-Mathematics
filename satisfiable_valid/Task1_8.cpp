@@ -3,13 +3,7 @@
 using namespace std;
 
 int main(){
-    string p1,p2,con;
-    cout<<"Please enter premises 1"<<"\n";
-    cin>>p1;
-    cout<<"Please enter premises 2"<<"\n";
-    cin>>p2;
-    cout<<"Please enter the conclusion"<<"\n";
-    cin>>con;
+   
     bool c,a,h;
     bool satisfiable = 0;
     bool valid = 0;
