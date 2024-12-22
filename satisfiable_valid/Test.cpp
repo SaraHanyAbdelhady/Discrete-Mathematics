@@ -30,7 +30,7 @@ bool evaluateExpression(const string& expr, const unordered_map<char, bool>& var
 int main() {
     // Input variables
     string vars;
-    cout << "Enter variables (e.g., CAH): ";
+    cout << "Enter variables (e.g., ABC): ";
     cin >> vars;
 
     // Input premises
@@ -40,13 +40,13 @@ int main() {
 
     vector<string> premises(numPremises);
     for (int i = 0; i < numPremises; ++i) {
-        cout << "Enter premise " << i + 1 << " (in RPN format, e.g., CA&): ";
+        cout << "Enter premise " << i + 1 << " (in POST FIX format, e.g., CA&): ";
         cin >> premises[i];
     }
 
     // Input conclusion
     string conclusion;
-    cout << "Enter conclusion (in RPN format, e.g., HC|): ";
+    cout << "Enter conclusion (in POST FIX format, e.g., HC|): ";
     cin >> conclusion;
 
     // Generate truth table and evaluate expressions
@@ -55,9 +55,9 @@ int main() {
     bool valid = false;
 
     cout << "\nTruth Table:\n";
-    cout << vars;
-    for (const auto& premise : premises) cout << "  " << premise;
-    cout << "  " << conclusion << endl;
+    for(auto v:vars) cout<<v<<" ";
+    for (const auto& premise : premises) cout << " " << premise;
+    cout << "    " << conclusion << endl;
      int counter1=0;
      int counter2=0;
 
@@ -81,8 +81,8 @@ int main() {
         
         
         // Print truth table row
-        for (char v : vars) cout << variables[v] << " ";
-        for (const auto& premise : premises) cout << "  " << evaluateExpression(premise, variables);
+        for (char v : vars) cout << variables[v]<< " ";
+        for (const auto& premise : premises) cout<<" " << evaluateExpression(premise, variables);
         cout << "  " << conclusionValue << endl;
     }
      
