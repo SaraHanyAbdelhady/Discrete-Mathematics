@@ -1,47 +1,50 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <unordered_map>
+#include <bits/stdc++.h>
 using namespace std;
 
-// Function to evaluate an RPN logical expression
-bool evaluateExpression(const string& expr, const unordered_map<char, bool>& variables) {
-    vector<bool> stack;
+// Function to evaluate an Post fix logical expression
+bool evaluateExpression(const string& expr, const unordered_map<char,bool>& variables) {
+    stack<bool> st;
     for (char c : expr) {
         if (variables.count(c)) {
-            // Push variable truth value onto the stack
-            stack.push_back(variables.at(c));
-        } else if (c == '&') { // Logical AND
-            bool b1 = stack.back(); stack.pop_back();
-            bool b2 = stack.back(); stack.pop_back();
-            stack.push_back(b1 && b2);
-        } else if (c == '|') { // Logical OR
-            bool b1 = stack.back(); stack.pop_back();
-            bool b2 = stack.back(); stack.pop_back();
-            stack.push_back(b1 || b2);
-        } else if (c == '!') { // Logical NOT
-            bool b = stack.back(); stack.pop_back();
-            stack.push_back(!b);
+            // Push variable onto the stack
+            st.push(variables.at(c));
+        } else if (c == '&') { //AND
+            bool b1 = st.top(); 
+            st.pop();
+            bool b2 = st.top(); 
+            st.pop();
+            st.push(b1 && b2);
+        } else if (c == '|') { //OR
+            bool b1 = st.top(); 
+            st.pop();
+            bool b2 = st.top(); 
+            st.pop();
+            st.push(b1 || b2);
+        } else if (c == '!') { // NOT
+            bool b = st.top();
+            st.pop();
+            st.push(!b);
         }
     }
-    return stack.back();
+    return st.top();
 }
 
 int main() {
     // Input variables
+    bool satisfiable=false;
     string vars;
     cout << "Enter the circuit variables (e.g., ABC): ";
     cin >> vars;
 
     // Input premises
-    int numGates;
-    cout << "Enter the number of gates: ";
-    cin >> numGates;
+    int numExp;
+    cout << "Enter the number of expressions: ";
+    cin >> numExp;
 
-    vector<string> gates(numGates);
-    for (int i = 0; i < numGates-1; ++i) {
-        cout << "Enter logical expression for gate" << i + 1 << " (in POST FIX format, e.g., CA&): ";
-        cin >> gates[i];
+    vector<string> Exps(numExp);
+    for (int i = 0; i < numExp; ++i) {
+        cout << "Enter the logical expression " << i + 1 << " (in POST FIX format, e.g., CA&): ";
+        cin >> Exps[i];
     }
 
     // Input conclusion
@@ -52,6 +55,10 @@ int main() {
     cout << "Enter the simplified circuit output (in POST FIX format, e.g., HC|): ";
     cin >> simplifiedOutput;
 
+    cout << "Enter the number of simplified circuit variables: ";
+    int numSimVars;
+    cin>>numSimVars;
+
     // Generate truth table and evaluate expressions
     int numVars = vars.size();
    
@@ -59,33 +66,61 @@ int main() {
 
     cout << "\nTruth Table:\n";
     for(auto v:vars) cout<<v<<" ";
-    for (const auto& gate : gates) cout << " " << gate;
-    cout << "    " << unsimplifiedOutput <<"     "<<simplifiedOutput<< endl;
-     int counter1=0;
-     int counter2=0;
-
-    for (int i = 0; i < (1 << numVars); ++i) {
+    for (const auto& exp : Exps) cout << " " << exp;
+    cout << "    " << unsimplifiedOutput <<"     "<<simplifiedOutput<<"\n";
+    int counter=0;
+    vector<int>v;
+    for (int i = 0; i < (1 << numVars); i++) {
         unordered_map<char, bool> variables;
-        for (int j = 0; j < numVars; ++j) {
+        for (int j = 0; j < numVars; j++) {
             variables[vars[j]] = (i >> j) & 1;
         }
+      
 
 
         bool unsimplifiedValue = evaluateExpression(unsimplifiedOutput, variables);
-        if(unsimplifiedValue) counter1++;
+
 
         bool simplifiedValue = evaluateExpression(simplifiedOutput, variables);
-        if(simplifiedValue) counter2++;
+       
         
+    if(unsimplifiedValue==1&&simplifiedValue==unsimplifiedValue) 
+    {
+     satisfiable=true;
+     for (char num : vars)  v.push_back(variables[num]);
+     counter++;
+    }
+    else if(unsimplifiedValue==0&&simplifiedValue==unsimplifiedValue){
+     counter++;
+    }
         
         // Print truth table row
         for (char v : vars) cout << variables[v]<< " ";
-        for (const auto& gate : gates) cout<<" " << evaluateExpression(gate, variables);
-        cout << "  " << unsimplifiedValue <<"     " << simplifiedValue <<endl;
+        for (const auto& exp : Exps) cout<<" " << evaluateExpression(exp, variables);  
+        cout << "  " << unsimplifiedValue <<"     " << simplifiedValue <<"\n";
+       
     }
+
      
-     if(counter1==counter2) equivalent=true;
+     if(counter==pow(2,numVars)) equivalent=true;
     // Output results
+    cout << "\nSatisfiable: " << satisfiable << endl;
+  if(satisfiable){
+cout<<"The input values for the unSimplified expression:"<<endl;
+   for(auto v:vars) cout<<v<<" ";
+     int count=2;
+    while(count--){
+        if(count==0)
+        cout<<"The input values for the Simplified expression:" ;
+    for(int i=0;i<v.size();i++){
+        if((i%3)==0)
+        cout<<endl;
+     if(count==0&&numSimVars<numVars&&(((i+1)%numVars)==0))
+       cout<<"X"<<" ";
+      else cout<<v[i]<<" "; 
+    }
+      cout<<endl;
+      }}
     cout << "\nEquivalent: " << equivalent << endl;
     return 0;
 }
